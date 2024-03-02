@@ -3,7 +3,7 @@ module.exports = {
         name: "Shopper",
         apiURL: process.env.API_BASE_URL
     },
-    port: process.env.PORT || 5000,
+    port: process.env.PORT || 4000,
     jwtKeys: {
         ACCESS_TOKEN: process.env.SECRET_ACCESS_TOKEN,
         REFRESH_TOKEN: process.env.SECRET_REFRESH_TOKEN,
