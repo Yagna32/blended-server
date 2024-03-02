@@ -1,5 +1,7 @@
 const express = require('express')
 const path = require('path')
+const cloudinary = require('cloudinary').v2
+
 const router = express.Router();
 
 const Product = require('../../models/Product')
@@ -54,12 +56,14 @@ router.get('/popular/:category',async(req,res)=>{
 //Creating upload enpoint for images
 const uploadsPath = path.resolve(__dirname, '../../upload/images'); // Adjust the path as needed
 router.use('/images',express.static(uploadsPath));
-router.post('/upload',upload.array('product',4),(req,res)=>{
-    var image_urls = []
-    req.files.forEach((file)=>{
-        image_urls.push(`http://localhost:${port}/api/v1/Product/images/${file.filename}`)
+router.post('/upload',upload.array('product',4),async(req,res)=>{
+    const uploadedFiles = req.files.map(async (file)=>{
+        const base64Image = Buffer.from(file.buffer).toString("base64");
+        const dataURI=`data:${file.mimetype};base64,${base64Image}`;
+        const uploadResponse = await cloudinary.uploader.upload(dataURI);
+        return uploadResponse.url
     })
-    console.log(image_urls);
+    const image_urls = await Promise.all(uploadedFiles);
     res.json({
         success:1,
         image_urls
