@@ -9,6 +9,10 @@ const {port,CLOUDINARY} = require('./configs/keys')
 const routes = require('./routes/routes')
 const app = express();
 
+app.use(express.json());
+app.use(cors());
+app.options('*', cors());
+app.use(routes)
 
 cloudinary.config({
     cloud_name:CLOUDINARY.CLOUD_NAME,
@@ -16,10 +20,7 @@ cloudinary.config({
     api_secret: CLOUDINARY.SECRET_KEY
 })
 
-app.use(express.json());
-app.use(cors());
-app.options('*', cors());
-app.use(routes)
+
 
 app.use((err,req,res,next) => {
     res.status(err.status || 500)
