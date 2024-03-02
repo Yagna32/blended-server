@@ -18,6 +18,7 @@ cloudinary.config({
 
 app.use(express.json());
 app.use(cors());
+app.options('*', cors());
 app.use(routes)
 
 app.use((err,req,res,next) => {
