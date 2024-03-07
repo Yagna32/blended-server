@@ -54,14 +54,14 @@ router.get('/popular/:category',async(req,res)=>{
 })
 
 //Creating upload enpoint for images
-const uploadsPath = path.resolve(__dirname, '../../upload/images'); // Adjust the path as needed
-router.use('/images',express.static(uploadsPath));
+// const uploadsPath = path.resolve(__dirname, '../../upload/images'); // Adjust the path as needed
+// router.use('/images',express.static(uploadsPath));
 router.post('/upload',upload.array('product',4),async(req,res)=>{
     const uploadedFiles = req.files.map(async (file)=>{
         const base64Image = Buffer.from(file.buffer).toString("base64");
         const dataURI=`data:${file.mimetype};base64,${base64Image}`;
         const uploadResponse = await cloudinary.uploader.upload(dataURI);
-        return uploadResponse.url
+        return uploadResponse.secure_url;
     })
     const image_urls = await Promise.all(uploadedFiles);
     res.json({
