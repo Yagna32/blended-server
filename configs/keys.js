@@ -33,5 +33,10 @@ module.exports = {
         API_KEY: process.env.CLOUDINARY_API_KEY,
         SECRET_KEY: process.env.CLOUDINARY_SECRET_KEY,
         URL: process.env.CLOUDINARY_URL
+    },
+    redis: {
+        INTERNAL_URL: process.env.REDIS_RENDER_INTERNAL_URL,
+        EXTERNAL_URL:process.env.REDIS_RENDER_EXTERNAL_URL,
+        CLI_CMD:process.env.REDIS_RENDER_CLI
     }
 }
