@@ -48,14 +48,12 @@ router.get('/newCollections',async(req,res)=>{
 })
 
 router.get('/popular/:category',async(req,res)=>{
-    console.log(req.query)
     let products = await Product.find({category:req.params.category})
     let popular = products.slice(0,4);
     res.send(popular);
 })
 
 router.get('/:category',async(req,res)=>{
-    console.log(req.query)
     let products = await Product.find({category:req.params.category}).skip((req.query.page-1)*12).limit(12);
     res.send(products);
 })

@@ -8,13 +8,11 @@ const {Redis} = require('ioredis')
 const redisClient = new Redis(redis.EXTERNAL_URL)//redis.EXTERNAL_URL
 
 const getUserCachedCart= (req,res,next)=>{
-    console.log("hello")
     try {
     const email = req.user.email;
     redisClient.get(email,(err,data)=>{
         if(err) throw err;
         if(data !== null) {
-            console.log(data);
             res.send(JSON.parse(data))
             return data;
         }
@@ -30,7 +28,7 @@ const getUserCachedCart= (req,res,next)=>{
 
 router.post('/addtoCart',Authenticate,async(req,res)=>{
     const updatedUser = await User.findOneAndUpdate({email:req.user.email},
-        {$push: {cartData: {product_id: req.body.itemId,price:req.body.price}}},
+        {$push: {cartData: {product_id: req.body.itemId, name:req.body.name, price:req.body.price, image:req.body.image}}},
         {new:true}
     )
     
