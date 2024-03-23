@@ -5,7 +5,7 @@ const {Authenticate} = require('../../middlewares/tempAuth')
 const {redis}=require('../../configs/keys')
 const {Redis} = require('ioredis')
 
-const redisClient = new Redis(redis.INTERNAL_URL)//redis.EXTERNAL_URL
+const redisClient = new Redis(redis.EXTERNAL_URL)//redis.EXTERNAL_URL
 
 const getUserCachedCart= (req,res,next)=>{
     console.log("hello")
