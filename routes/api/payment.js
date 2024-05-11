@@ -17,8 +17,8 @@ router.post('/create-checkout-session',async(req,res)=>{
         payment_method_types: ['card'], //4000003560000008
         line_items,
         mode:"payment",
-        success_url:payment.FRONTEND_URL,
-        cancel_url:payment.FRONTEND_URL
+        success_url:`${payment.FRONTEND_URL}/Successful`,
+        cancel_url:`${payment.FRONTEND_URL}/Failed`
     })
     res.json({id:session.id})
 
