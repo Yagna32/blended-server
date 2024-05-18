@@ -7,9 +7,6 @@ const OrderSchema = mongoose.Schema({
         required: true,
     },
     orders: [{
-        order_id: {
-            type: mongoose.Types.ObjectId
-        },
         products: [{
             product_id: {
                 type: mongoose.Types.ObjectId,
@@ -23,11 +20,11 @@ const OrderSchema = mongoose.Schema({
         createdAt: {
             type: Date,
             default: Date.now
-        }
+        }   
     }]
 },{strict:'throw'})
 
-const Order = new mongoose.model('Orders',OrderSchema)
+const Order = mongoose.model('Orders',OrderSchema)
 
 module.exports = Order
 

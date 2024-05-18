@@ -64,6 +64,13 @@ router.post('/removeFromCart',Authenticate,async(req,res)=>{
     res.send(userData.cartData);
 })
 
+router.put('/removeAll',Authenticate,async(req,res)=>{
+    const userData = await User.findOneAndUpdate({email:req.user.email},{cartData:[]},{new:true})
+    res.status(200).json({
+        Success: true
+    })
+})
+
 router.get('/getCart',Authenticate,getUserCachedCart,async(req,res)=>{
     let userData = await User.findOne({email: req.user.email})
     if(userData)
