@@ -8,7 +8,7 @@ module.exports = {
         ACCESS_TOKEN: process.env.SECRET_ACCESS_TOKEN,
         REFRESH_TOKEN: process.env.SECRET_REFRESH_TOKEN,
         refreshtokenLife: '1d',
-        accesstokenLife:'360s',
+        accesstokenLife:'1d',
         issuer: 'https://github.com/Yagna32'
     },
     db: {
