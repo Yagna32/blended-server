@@ -4,6 +4,7 @@ const { Authenticate } = require('../../middlewares/tempAuth');
 const Order = require('../../models/Orders');
 const Product = require('../../models/Product');
 const User = require('../../models/Users');
+
 const sampleOrder = {
     user: '603a8e284fd9b67a18e4d144', // Assuming this is a valid ObjectId referencing a user document
     orders: [
@@ -25,23 +26,20 @@ const sampleOrder = {
     ]
 };
 
-router.get('/',Authenticate,async(req,res)=>{
+router.get('/',Authenticate,async(req,res,next)=>{
     try {
-        console.log(req.user)
         const getUser = await User.findOne({email:req.user.email})
-        console.log(getUser)
         if(getUser===null) {
             res.status(400).json({message:"No Users Found"})
         }
         const getorder = await Order.find({user:getUser.id}).populate('orders.products.product_id');
-        console.log(getorder)
         res.send(getorder[0].orders)
     }catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 
-router.get('/:order_id',Authenticate,async(req,res)=>{
+router.get('/:order_id',Authenticate,async(req,res,next)=>{
     try {
         console.log(req.user)
         const getUser = await User.findOne({email:req.user.email})
@@ -53,12 +51,12 @@ router.get('/:order_id',Authenticate,async(req,res)=>{
         console.log(getorder)
         res.send(getorder.orders[0])
     }catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 
 
-router.post('/newOrder',Authenticate,async (req,res)=>{
+router.post('/newOrder',Authenticate,async (req,res,next)=>{
     try {
         if(req.body.order_value ===0) return;
         const getUser = await User.findOne({email:req.user.email})
@@ -91,7 +89,7 @@ router.post('/newOrder',Authenticate,async (req,res)=>{
         await User.findOneAndUpdate({email:req.user.email},{cartData: []})
     }
     catch(error) {
-        console.log(error)
+        next(error)
     }
 })
 

@@ -3,13 +3,18 @@ const sendMail = require('../../middlewares/nodemailer')
 const {Authenticate} =require('../../middlewares/tempAuth')
 const router = express.Router();
 
-router.get('/',(req,res)=>res.send('Emailing service'))
+router.get('/',(req,res,next)=>res.send('Emailing service'))
 
 router.get('/sendMail',Authenticate,async(req,res)=>{
-sendMail(req.user.email)
-res.json({
-    success: true
-})
+    try {
+        sendMail(req.user.email)
+        res.json({
+            success: true
+        })
+    }
+    catch(error) {
+        next(error)
+    }
 })
 
 module.exports = router

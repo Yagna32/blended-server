@@ -3,8 +3,8 @@ const router = express.Router()
 const {signAccessToken,signRefreshToken,verifyRefreshToken } = require('../../middlewares/tempAuth')
 const User = require('../../models/Users')
 
-router.post('/signup',async(req,res)=>{
-    let check = await User.findOne({email:req.body.email})
+router.post('/signup',async(req,res,next)=>{
+    try{let check = await User.findOne({email:req.body.email})
     if(check) {
         return res.status(400).json({
             success: false,
@@ -25,11 +25,15 @@ router.post('/signup',async(req,res)=>{
         access_token,
         refresh_token
     })
-
+}catch(error) {
+    console.log(error)
+    next(error)
+}
 })
 
-router.post('/login',async(req,res)=>{
-    let user = await User.findOne({email:req.body.email})
+router.post('/login',async(req,res,next)=>{
+    try{
+        let user = await User.findOne({email:req.body.email})
     if(user) {
         const validPass = await user.isvalidPass(req.body.password)
         if(validPass){
@@ -48,38 +52,35 @@ router.post('/login',async(req,res)=>{
             })
         }
         else {
-            res.json({
-                success: false,
-                error: "Wrong Password"
-            })
+            throw new Error("wrong password")
         }
     }
     else {
-        res.json({
-            success: false,
-            error: "User does not exist"
-        })
+        throw new Error("user does not exist")
     }
+}catch(error) {
+    if(error.message === "user does not exist") {
+        error.status = 404
+    }
+    else if (error.message === "wrong password") {
+        error.status = 401
+    }
+    next(error)
+}
 })
 
 router.get('/:email/getTokens',async(req,res,next)=>{
     const user = await User.findOne({email:req.params.email});
-    if(!user) {
-        res.status(404).json({
-            success: false,
-            error: "No Such User"
-        })
-    }
     try {
-    const refresh_payload = await verifyRefreshToken(req.headers['refresh-token'])
-    console.log(refresh_payload)
+    if(!user) {
+        throw new Error("user not found")
+    }
+    await verifyRefreshToken(req.headers['refresh-token'])
     }
     catch(error) {
-        const message = error.message === 'JsonWebTokenError' ? 'Unauthorized' : error.message;
-        res.status(401).json({
-            reason: "Invalid Token",
-            error: message
-        })
+        error.message = error.message === 'JsonWebTokenError' ? 'Unauthorized' : error.message;
+        error.status = error.message === "user not found" ? 404 : 401
+        next(error)
         return;
     }
     console.log(`${req.params.email}  got new tokens`)
@@ -91,5 +92,6 @@ router.get('/:email/getTokens',async(req,res,next)=>{
     refresh_token
     })
 })
+
 
 module.exports =  router;
